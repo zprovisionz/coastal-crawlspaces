@@ -32,6 +32,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Merriweather:wght@700;900&display=swap" rel="stylesheet" />
 
+<!--
+  NAP consistency: the name, phone, city and hours below must match the Google
+  Business Profile and Facebook page character for character. Once those exist,
+  add their URLs to "sameAs" here and to GBP_URL in the config script at the
+  bottom of this file.
+-->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -42,7 +48,6 @@
   "url": "https://coastalcrawlspaces.com/",
   "telephone": "+1-843-284-6425",
   "email": "hello@coastalcrawlspaces.com",
-  "hasMap": "https://g.page/r/Ca2qzAGFYUXpEAE",
   "priceRange": "$-$$",
   "currenciesAccepted": "USD",
   "image": [
@@ -191,6 +196,11 @@
     .nav-links.open a { padding: 12px 4px; border-bottom: 1px solid var(--bg-soft); font-size: 16px; color: var(--navy); }
     .nav-links.open a:last-child { border-bottom: 0; }
   }
+
+  /* Elements that depend on a live Google Business Profile stay hidden until
+     GBP_URL is set, so the site never ships links to a profile that isn't live. */
+  body:not(.gbp-live) [data-gbp-only] { display: none !important; }
+  body.gbp-live [data-no-gbp] { display: none !important; }
 
   /* skip link */
   .skip-link { position: absolute; left: -9999px; top: 0; z-index: 100; background: var(--navy); color: #fff; font-weight: 700; padding: 10px 18px; border-radius: 0 0 8px 0; }
@@ -415,6 +425,9 @@
   footer a { color: #cfe0ee; font-weight: 600; }
   footer a:hover { color: #fff; }
   footer .fine { border-top: 1px solid rgba(255,255,255,.12); padding-top: 16px; line-height: 1.7; }
+  /* Keep this citation identical to the Google Business Profile and Facebook page. */
+  footer .nap { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 5px; font-style: normal; }
+  footer .nap a { font-weight: 700; }
 
   /* sticky mobile CTA */
   .sticky-cta { position: fixed; bottom: 0; left: 0; right: 0; z-index: 60; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #fff; border-top: 1px solid var(--line); padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); box-shadow: 0 -6px 20px rgba(0,0,0,.08); }
@@ -480,9 +493,12 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <div class="hero-rating">
+      <div class="hero-rating" data-gbp-only>
         <span class="stars">★★★★★</span>
-        <span class="rating-label">5-star rated · <a href="https://g.page/r/Ca2qzAGFYUXpEAE/review" target="_blank" rel="noopener">See our Google reviews</a></span>
+        <span class="rating-label">5-star rated · <a data-gbp-review href="#" target="_blank" rel="noopener">See our Google reviews</a></span>
+      </div>
+      <div class="hero-rating" data-no-gbp>
+        <span class="rating-label">Charleston born &amp; raised · Owner-operated · Fully insured</span>
       </div>
       <h1>Crawlspace Vapor Barrier &amp; Encapsulation in <span>Charleston, SC</span></h1>
       <p class="sub">I'm a local owner-operator, not a franchise. I inspect your crawlspace for free, document it with photos and video, and send you a written line-item quote the same day.</p>
@@ -549,8 +565,8 @@
         <div class="review-meta">West Ashley · Vapor barrier + cleanout</div>
       </div>
     </div>
-    <div class="reviews-cta">
-      <a href="https://g.page/r/Ca2qzAGFYUXpEAE/review" target="_blank" rel="noopener">
+    <div class="reviews-cta" data-gbp-only>
+      <a data-gbp-review href="#" target="_blank" rel="noopener">
         Read more reviews on Google →
       </a>
     </div>
@@ -872,10 +888,9 @@
     </ul>
     <p style="color:var(--muted);font-size:15.5px;max-width:720px">A lot of my work is older raised homes near the marsh and newer construction with minimal moisture control. Don't see your neighborhood? Call — if you're near the metro, I can usually make it work.</p>
     <div class="map-embed">
-      <!-- Update this embed URL once Coastal Crawlspaces has a Google Business Profile -->
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d214483.11737209826!2d-79.97085175000001!3d32.863815249999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6514b4a8d1f4591f%3A0xe945618501ccaaad!2sChucktown%20Crawlspace%20Co!5e0!3m2!1sen!2sus!4v1783326710261!5m2!1sen!2sus" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Coastal Crawlspaces service area — Charleston, SC"></iframe>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d214483.11737209826!2d-79.97085175000001!3d32.863815249999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1783326710261!5m2!1sen!2sus" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Coastal Crawlspaces service area — the Charleston, SC metro"></iframe>
     </div>
-    <a href="https://g.page/r/Ca2qzAGFYUXpEAE" class="map-link" target="_blank" rel="noopener">
+    <a data-gbp-only data-gbp-profile href="#" class="map-link" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
       View on Google Maps
     </a>
@@ -923,14 +938,14 @@
 </section>
 
 <!-- ================= REVIEW CTA BAND ================= -->
-<div class="reviewcta">
+<div class="reviewcta" data-gbp-only>
   <section>
     <div class="wrap">
       <div>
         <h3>Already had work done?</h3>
         <p>A quick Google review helps other Charleston homeowners find a local option they can trust.</p>
       </div>
-      <a href="https://g.page/r/Ca2qzAGFYUXpEAE/review" class="btn" target="_blank" rel="noopener">Leave a Google review</a>
+      <a data-gbp-review href="#" class="btn" target="_blank" rel="noopener">Leave a Google review</a>
     </div>
   </section>
 </div>
@@ -1018,6 +1033,13 @@
       <div>
         <div class="brand-name" style="font-size:20px">Coastal Crawlspaces<small>Charleston, South Carolina</small></div>
         <p style="margin-top:10px;max-width:420px">Local owner-operator handling crawlspace vapor barrier, encapsulation, and moisture control across the Charleston metro. Published pricing, free inspections, every job documented.</p>
+        <address class="nap">
+          <span>Serving the Charleston, SC metro &amp; the Lowcountry</span>
+          <span>We come to you — no storefront or showroom visits</span>
+          <span>Call or text: <a href="tel:+18432846425">(843) 284-6425</a></span>
+          <span><a href="mailto:hello@coastalcrawlspaces.com">hello@coastalcrawlspaces.com</a></span>
+          <span>Open Mon–Sun, 7am–7pm</span>
+        </address>
       </div>
       <nav class="foot-links" aria-label="Footer">
         <a href="#services">Services</a>
@@ -1046,6 +1068,36 @@
 </div>
 
 <script>
+  /* ---------------------------------------------------------------
+     Google Business Profile
+
+     Once the new profile is verified and has reviews, paste its short
+     link (Business Profile > Read reviews > Get more reviews, which
+     looks like https://g.page/r/XXXXXXXX) between the quotes below.
+     That switches on the star rating in the hero, the "read more
+     reviews" link, the review request band, and the "View on Google
+     Maps" link. Leave it empty and none of those appear, so the site
+     never points at a profile that isn't live.
+     --------------------------------------------------------------- */
+  var GBP_URL = "";
+
+  if (GBP_URL) {
+    var profileUrl = GBP_URL.replace(/\/+$/, '').replace(/\/review$/, '');
+    /* Only the g.page short link supports the /review shortcut that opens the
+       review box directly. Any other URL shape just goes to the profile. */
+    var reviewUrl = /^https:\/\/g\.page\/r\//.test(profileUrl)
+      ? profileUrl.replace(/\/review$/, '') + '/review'
+      : profileUrl;
+
+    document.body.classList.add('gbp-live');
+    document.querySelectorAll('[data-gbp-profile]').forEach(function (el) {
+      el.href = profileUrl;
+    });
+    document.querySelectorAll('[data-gbp-review]').forEach(function (el) {
+      el.href = reviewUrl;
+    });
+  }
+
   document.getElementById('yr').textContent = new Date().getFullYear();
 
   var navToggle = document.querySelector('.nav-toggle');
