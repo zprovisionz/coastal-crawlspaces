@@ -131,9 +131,19 @@
     --line: #d5e2ea;
     --serif: "Merriweather", Georgia, serif;
     --sans: "Source Sans 3", system-ui, sans-serif;
+    --radius-sm: 8px;
+    --radius: 12px;
+    --photo-bg: #dce5ec;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
+  /* keep anchored headings clear of the sticky header */
+  [id] { scroll-margin-top: 88px; }
+  /* consistent branded focus ring across every interactive element */
+  a:focus-visible, button:focus-visible, summary:focus-visible,
+  input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 3px solid var(--teal); outline-offset: 2px; border-radius: 4px;
+  }
   body { margin: 0; font-family: var(--sans); font-size: 17px; line-height: 1.6; color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
   img { display: block; max-width: 100%; }
   a { color: inherit; text-decoration: none; }
@@ -164,16 +174,26 @@
   /* header */
   header.site { position: sticky; top: 0; z-index: 50; background: #fff; border-bottom: 1px solid var(--line); }
   .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 14px; }
-  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .brand-mark { width: 44px; height: 44px; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
   .brand-mark svg { display: block; }
   .brand-name { font-family: var(--serif); font-weight: 900; font-size: 18px; color: var(--navy); line-height: 1.1; }
-  .brand-name small { display: block; font-family: var(--sans); font-weight: 600; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--teal); }
-  .nav-links { display: none; gap: 24px; font-weight: 600; font-size: 15px; color: var(--muted); }
+  .brand-name small { display: block; font-family: var(--sans); font-weight: 600; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--teal); white-space: nowrap; }
+  .nav-links { display: none; gap: 22px; font-weight: 600; font-size: 15px; color: var(--muted); white-space: nowrap; }
   .nav-links a:hover { color: var(--navy); }
   .nav-phone { display: inline-flex; align-items: center; gap: 8px; background: var(--teal); color: #fff; font-weight: 700; padding: 10px 16px; border-radius: 8px; font-size: 15px; white-space: nowrap; }
   .nav-phone:hover { background: var(--teal-dark); }
   .nav-phone svg { width: 15px; height: 15px; }
+  /* narrow phones: collapse the header call button to an icon so the brand never crowds */
+  @media (max-width: 560px) {
+    .nav-phone .np-text { display: none; }
+    .nav-phone { padding: 11px 13px; }
+    .brand-mark { width: 38px; height: 38px; }
+    .brand-mark svg { width: 38px; height: 38px; }
+    .brand-name { font-size: 15px; }
+    /* keep the locality line on one line so the header never grows to two rows */
+    .brand-name small { font-size: 9.5px; letter-spacing: .04em; white-space: nowrap; }
+  }
   .nav-right { display: flex; align-items: center; gap: 10px; }
   .nav-toggle { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 42px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; color: var(--navy); padding: 0; }
   .nav-toggle svg { width: 22px; height: 22px; }
@@ -200,8 +220,9 @@
   .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 16px; }
   .checks li { display: flex; align-items: center; gap: 10px; }
   .checks svg { width: 18px; height: 18px; color: var(--teal); flex-shrink: 0; }
-  .hero-photo { border-radius: 12px; overflow: hidden; box-shadow: 0 12px 40px -12px rgba(13,61,92,.35); background: #dce5ec; }
-  .hero-photo img { width: 100%; object-fit: cover; aspect-ratio: 4/3; }
+  .hero-photo { border-radius: var(--radius); overflow: hidden; box-shadow: 0 12px 40px -12px rgba(13,61,92,.35); background: var(--photo-bg); }
+  /* 16/9 matches the source photo (2208x1242) — no more cropping the top and bottom off */
+  .hero-photo img { width: 100%; object-fit: cover; aspect-ratio: 16/9; }
   .photo-credit { font-size: 13px; color: var(--muted); margin-top: 10px; text-align: center; }
 
   /* trust strip */
@@ -238,7 +259,7 @@
   /* tier cards */
   .tier-cards { display: grid; gap: 18px; margin-bottom: 40px; }
   @media (min-width: 720px) { .tier-cards { grid-template-columns: repeat(3, 1fr); } }
-  .tier { border: 2px solid var(--line); border-radius: 14px; padding: 30px 24px 26px; background: #fff; position: relative; text-align: center; }
+  .tier { border: 2px solid var(--line); border-radius: var(--radius); padding: 30px 24px 26px; background: #fff; position: relative; text-align: center; }
   .tier.popular { border-color: var(--teal); box-shadow: 0 4px 20px -8px rgba(27,125,140,.35); }
   .tier-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--teal); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 4px 16px; border-radius: 20px; white-space: nowrap; }
   .tier-mil { font-family: var(--sans); font-size: 14px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
@@ -251,35 +272,73 @@
 
   /* full pricing table */
   .pricing-sub { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 14px; }
-  table.prices { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 16px; }
+  /* the price column can't wrap, so let the table scroll itself on very narrow phones
+     instead of pushing the whole page sideways */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); }
+  table.prices { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; font-size: 16px; }
+  @media (max-width: 480px) { table.prices th, table.prices td { padding: 12px 13px; font-size: 15px; } }
   table.prices th, table.prices td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); }
   table.prices th { background: var(--navy); color: #fff; font-weight: 700; }
   table.prices tr:last-child td { border-bottom: 0; }
   table.prices td.p { font-weight: 700; color: var(--teal-dark); white-space: nowrap; }
   .pricing-note { font-size: 14.5px; color: var(--muted); margin-top: 14px; }
 
-  /* before/after + gallery */
+  /* ===== finished-work showcase carousel ===== */
   .beforeafter { background: var(--bg-soft); }
-  .ba-feature { display: grid; gap: 14px; margin-top: 28px; margin-bottom: 36px; }
+  .showcase { margin-top: 30px; }
+  .showcase-frame { position: relative; height: clamp(280px, 54vw, 500px); background: var(--photo-bg); border-radius: var(--radius); overflow: hidden; box-shadow: 0 12px 40px -16px rgba(13,61,92,.4); }
+  .showcase-track { display: flex; height: 100%; margin: 0; padding: 0; list-style: none; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; }
+  .showcase-track::-webkit-scrollbar { display: none; }
+  .showcase-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; position: relative; }
+  .showcase-btn { display: block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background: none; cursor: zoom-in; }
+  /* contain, never cover: portrait and landscape shots both show in full, no brutal cropping */
+  .showcase-slide img { width: 100%; height: 100%; object-fit: contain; }
+  .showcase-tag { position: absolute; top: 12px; left: 12px; background: rgba(7,39,57,.85); color: #fff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 4px 10px; border-radius: 5px; pointer-events: none; }
+  .showcase-zoom { position: absolute; bottom: 12px; right: 12px; display: inline-flex; align-items: center; gap: 6px; background: rgba(7,39,57,.8); color: #fff; font-size: 12px; font-weight: 700; padding: 6px 11px; border-radius: 6px; pointer-events: none; }
+  .showcase-zoom svg { width: 14px; height: 14px; }
+  .showcase-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(7,39,57,.62); color: #fff; display: grid; place-items: center; cursor: pointer; z-index: 2; transition: background .15s ease; }
+  .showcase-arrow:hover { background: var(--navy); }
+  .showcase-arrow svg { width: 20px; height: 20px; }
+  .showcase-arrow.prev { left: 12px; }
+  .showcase-arrow.next { right: 12px; }
+  .showcase-dots { display: flex; justify-content: center; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+  .showcase-dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; background: #b9ccd8; padding: 0; cursor: pointer; transition: background .15s ease, transform .15s ease; }
+  .showcase-dots button.active { background: var(--teal); transform: scale(1.25); }
+  .showcase-caption { text-align: center; font-size: 14px; color: var(--muted); margin-top: 12px; }
+
+  /* ===== before / after pair ===== */
+  .ba-head { font-family: var(--serif); font-weight: 900; color: var(--navy); font-size: 20px; margin: 44px 0 4px; }
+  .ba-sub { color: var(--muted); font-size: 15.5px; margin-bottom: 18px; }
+  .ba-feature { display: grid; gap: 14px; }
   @media (min-width: 640px) { .ba-feature { grid-template-columns: 1fr 1fr; } }
-  .ba-photo { border-radius: 12px; overflow: hidden; position: relative; background: #dce5ec; }
-  .ba-photo img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
-  .ba-label { position: absolute; bottom: 12px; left: 12px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; padding: 5px 13px; border-radius: 6px; }
+  .ba-photo { border-radius: var(--radius); overflow: hidden; position: relative; background: var(--photo-bg); height: clamp(240px, 44vw, 380px); }
+  .ba-photo button { display: block; width: 100%; height: 100%; border: 0; padding: 0; background: none; cursor: zoom-in; }
+  .ba-photo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .ba-label { position: absolute; bottom: 12px; left: 12px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; padding: 5px 13px; border-radius: 6px; pointer-events: none; }
   .ba-label.before { background: rgba(7,39,57,.88); color: #fff; }
   .ba-label.after { background: rgba(27,125,140,.92); color: #fff; }
-  .gal-grid { display: grid; gap: 14px; grid-template-columns: repeat(2, 1fr); }
-  @media (min-width: 640px) { .gal-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (min-width: 900px) { .gal-grid { grid-template-columns: repeat(4, 1fr); } }
-  .gal { display: block; border-radius: 10px; overflow: hidden; background: #dce5ec; position: relative; }
-  .gal img { width: 100%; object-fit: cover; aspect-ratio: 1; transition: transform .3s ease; }
-  .gal:hover img { transform: scale(1.05); }
-  .gal .tag { position: absolute; top: 8px; left: 8px; z-index: 2; background: rgba(7,39,57,.85); color: #fff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 3px 8px; border-radius: 5px; }
+
+  /* ===== lightbox ===== */
+  /* the dialog itself carries the scrim so page content never bleeds through */
+  dialog.lightbox { width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: 0; padding: 0; background: rgba(7,39,57,.985); overflow: hidden; }
+  dialog.lightbox::backdrop { background: rgba(7,39,57,.985); }
+  .lb-stage { position: relative; width: 100%; height: 100%; display: grid; place-items: center; padding: 64px 16px 72px; }
+  .lb-stage img { max-width: 94vw; max-height: 76vh; object-fit: contain; border-radius: 6px; }
+  .lb-counter { position: absolute; top: 18px; left: 0; right: 0; text-align: center; color: #7fd8e8; font-size: 13px; font-weight: 700; letter-spacing: .05em; }
+  .lb-caption { position: absolute; bottom: 24px; left: 16px; right: 16px; text-align: center; color: #e5edf4; font-size: 15px; line-height: 1.5; }
+  .lb-close, .lb-arrow { border: 0; background: rgba(255,255,255,.14); color: #fff; cursor: pointer; display: grid; place-items: center; border-radius: 50%; transition: background .15s ease; }
+  .lb-close:hover, .lb-arrow:hover { background: rgba(255,255,255,.28); }
+  .lb-close { position: absolute; top: 14px; right: 14px; width: 42px; height: 42px; }
+  .lb-close svg { width: 20px; height: 20px; }
+  .lb-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; }
+  .lb-arrow svg { width: 24px; height: 24px; }
+  .lb-arrow.prev { left: 12px; }
+  .lb-arrow.next { right: 12px; }
 
   /* why local */
-  .franchise { background: #fff; }
   .fr-grid { display: grid; gap: 14px; margin-top: 30px; }
   @media (min-width: 760px) { .fr-grid { grid-template-columns: 1fr 1fr; } }
-  .fr-item { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+  .fr-item { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
   .fr-item svg { width: 20px; height: 20px; color: var(--teal); flex-shrink: 0; margin-top: 3px; }
   .fr-item b { color: var(--navy); }
   .fr-item span { color: var(--muted); font-size: 15.5px; }
@@ -291,7 +350,7 @@
   .about .sig { font-family: var(--serif); font-weight: 900; color: var(--navy); font-size: 20px; margin-top: 6px; }
   .about-points { display: grid; gap: 12px; margin-top: 28px; padding: 0; list-style: none; }
   @media (min-width: 640px) { .about-points { grid-template-columns: repeat(3, 1fr); } }
-  .about-points li { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; font-size: 15px; color: var(--muted); }
+  .about-points li { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; font-size: 15px; color: var(--muted); }
   .about-points b { display: block; color: var(--navy); font-size: 16px; margin-bottom: 4px; }
 
   /* process */
@@ -338,7 +397,7 @@
 
   /* faq */
   .faq { background: var(--bg-warm); }
-  details { border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-top: 12px; }
+  details { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; margin-top: 12px; }
   summary { cursor: pointer; padding: 18px 20px; font-weight: 700; font-size: 17px; color: var(--navy); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
   summary::-webkit-details-marker { display: none; }
   summary::after { content: "+"; font-size: 22px; color: var(--teal); font-weight: 400; flex-shrink: 0; }
@@ -349,7 +408,8 @@
   .reviewcta { background: var(--teal); color: #fff; }
   .reviewcta .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
   .reviewcta h3 { color: #fff; font-size: 22px; margin-bottom: 4px; }
-  .reviewcta p { color: rgba(255,255,255,.82); margin: 0; font-size: 16px; }
+  /* full-strength white: rgba(...,.82) on teal failed WCAG AA at ~3.6:1 */
+  .reviewcta p { color: #fff; margin: 0; font-size: 16px; }
   .reviewcta .btn { background: #fff; color: var(--teal-dark); }
   .reviewcta .btn:hover { background: #e8f6f8; }
 
@@ -357,7 +417,10 @@
   .contact { background: var(--bg-soft); }
   .contact-grid { display: grid; gap: 36px; }
   @media (min-width: 900px) { .contact-grid { grid-template-columns: 1fr 1.15fr; gap: 56px; } }
-  .c-row { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 20px; }
+  .c-row { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 20px; min-width: 0; }
+  /* long email addresses must wrap rather than push the page sideways */
+  .c-row > div { min-width: 0; }
+  .c-row .v a { overflow-wrap: anywhere; }
   .c-row .ico { width: 40px; height: 40px; border-radius: 8px; background: #fff; border: 1px solid var(--line); display: grid; place-items: center; color: var(--teal); flex-shrink: 0; }
   .c-row .ico svg { width: 18px; height: 18px; }
   .c-row .k { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
@@ -415,7 +478,7 @@
   <div class="wrap nav">
     <a href="#top" class="brand" aria-label="Coastal Crawlspaces home">
       <span class="brand-mark">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 44 44" width="44" height="44">
           <rect width="44" height="44" rx="8" fill="#0d3d5c"/>
           <path d="M0 33 Q11 27 22 33 Q33 39 44 33 L44 44 L0 44Z" fill="#1b7d8c"/>
           <text x="22" y="22" text-anchor="middle" dominant-baseline="middle" font-family="Georgia,serif" font-weight="900" font-size="15" fill="#ffffff">CC</text>
@@ -433,13 +496,13 @@
       <a href="#contact">Contact</a>
     </nav>
     <div class="nav-right">
-      <a href="tel:+18432846425" class="nav-phone">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg>
-        (843) 284-6425
+      <a href="tel:+18432846425" class="nav-phone" aria-label="Call (843) 284-6425">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg>
+        <span class="np-text">(843) 284-6425</span>
       </a>
       <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
-        <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        <svg class="icon-open" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <svg class="icon-close" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
       </button>
     </div>
   </div>
@@ -454,20 +517,20 @@
       <h1>Crawlspace Vapor Barrier &amp; Encapsulation in <span>Charleston, SC</span></h1>
       <p class="sub">I'm a local owner-operator, not a franchise. I inspect your crawlspace for free, document it with photos and video, and send you a written line-item quote the same day.</p>
       <div class="hero-offer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         Free moisture inspection with photos &amp; video · same-week scheduling · fully insured
       </div>
       <div class="hero-ctas">
         <a href="tel:+18432846425" class="btn btn-teal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg>
           Call (843) 284-6425
         </a>
         <a href="#contact" class="btn btn-outline">Request a Free Inspection</a>
       </div>
       <ul class="checks">
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Vapor barrier from $.70/sq ft — full pricing below</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> You see the same photos and video I do — no surprise add-ons</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Text a photo of your crawlspace for a rough ballpark</li>
+        <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Vapor barrier from $.70/sq ft — full pricing below</li>
+        <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> You see the same photos and video I do — no surprise add-ons</li>
+        <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Text a photo of your crawlspace for a rough ballpark</li>
       </ul>
     </div>
     <div>
@@ -482,11 +545,11 @@
 <!-- ================= TRUST STRIP ================= -->
 <div class="trust">
   <div class="wrap">
-    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/></svg> Fully insured</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Charleston born &amp; raised</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Same-week service</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L6 23"/></svg> Every job photo-documented</span>
-    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Work guaranteed</span>
+    <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/></svg> Fully insured</span>
+    <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Charleston born &amp; raised</span>
+    <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Same-week service</span>
+    <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.5-3.5L6 23"/></svg> Every job photo-documented</span>
+    <span><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Work guaranteed</span>
   </div>
 </div>
 
@@ -505,10 +568,10 @@
       <div>
         <h3>What it causes — and the fix</h3>
         <ul class="problem-list">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Musty smells and higher humidity upstairs</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Mold, wood rot, and soft subflooring</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Flagged moisture on a home-inspection report</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Power bills higher than they should be</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Musty smells and higher humidity upstairs</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Mold, wood rot, and soft subflooring</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Flagged moisture on a home-inspection report</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Power bills higher than they should be</li>
         </ul>
         <p style="margin-top:16px">The fix is a layered approach: a sealed <strong>ground vapor barrier</strong> first, then <strong>wall liner and pier wraps</strong> where the space needs full encapsulation, <strong>interior drainage</strong> for active water, and a <strong>dehumidifier</strong> through my licensed HVAC partners when the space needs to be fully conditioned. I'll recommend what your house actually needs — not the most expensive package.</p>
       </div>
@@ -577,10 +640,10 @@
         <div class="tier-price"><sup>$</sup>.70</div>
         <div class="tier-unit">per square foot, installed &amp; seams taped</div>
         <ul class="tier-features">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Full ground coverage</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Seams overlapped &amp; taped</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Right choice for most Lowcountry homes</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 1,500 sq ft ≈ $1,500 total <small style="font-weight:400">(minimum job)</small></li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Full ground coverage</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Seams overlapped &amp; taped</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Right choice for most Lowcountry homes</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 1,500 sq ft ≈ $1,500 total <small style="font-weight:400">(minimum job)</small></li>
         </ul>
       </div>
       <div class="tier popular">
@@ -589,10 +652,10 @@
         <div class="tier-price"><sup>$</sup>1.30</div>
         <div class="tier-unit">per square foot, installed &amp; seams taped</div>
         <ul class="tier-features">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Heavy-duty reinforced film</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Handles storage &amp; foot traffic</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Longer service life</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 1,500 sq ft ≈ $1,950 total</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Heavy-duty reinforced film</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Handles storage &amp; foot traffic</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Longer service life</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 1,500 sq ft ≈ $1,950 total</li>
         </ul>
       </div>
       <div class="tier">
@@ -600,15 +663,16 @@
         <div class="tier-price"><sup>$</sup>1.70</div>
         <div class="tier-unit">per square foot, installed &amp; seams taped</div>
         <ul class="tier-features">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Maximum thickness &amp; durability</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Best for high water table areas</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Encapsulation-grade protection</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 1,500 sq ft ≈ $2,550 total</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Maximum thickness &amp; durability</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Best for high water table areas</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Encapsulation-grade protection</li>
+          <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 1,500 sq ft ≈ $2,550 total</li>
         </ul>
       </div>
     </div>
 
     <h3 class="pricing-sub">All Service Pricing</h3>
+    <div class="table-wrap">
     <table class="prices">
       <thead><tr><th scope="col">Service</th><th scope="col">Price</th></tr></thead>
       <tbody>
@@ -621,6 +685,7 @@
         <tr><td>Crawlspace inspection with photo/video report</td><td class="p">Free</td></tr>
       </tbody>
     </table>
+    </div>
     <p class="pricing-note"><strong>Example:</strong> a typical 1,500 sq ft crawlspace with 10 mil barrier works out to about $1,050 by the square foot rate, so it's billed at the <strong>$1,500 minimum</strong> that applies to every job. Larger or higher-mil jobs are priced by square footage once they exceed the minimum. Have a written quote from another company with comparable scope and materials? Send it over — I'm happy to take a look.</p>
   </div>
 </section>
@@ -630,44 +695,111 @@
   <div class="wrap">
     <p class="kicker">Finished Work</p>
     <h2>Before &amp; After: See the Difference</h2>
-    <p class="lede">Every job is photo-documented from start to finish. Here's what it looks like before we start and after we're done.</p>
+    <p class="lede">Every job is photo-documented from start to finish. These are real Charleston crawlspaces I've sealed — select any photo to view it full size.</p>
 
+    <div class="showcase" aria-roledescription="carousel" aria-label="Completed crawlspace work">
+      <div class="showcase-frame">
+        <button type="button" class="showcase-arrow prev" id="showcasePrev" aria-label="Previous photo">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <ul class="showcase-track" id="showcaseTrack">
+          <li class="showcase-slide">
+            <button type="button" class="showcase-btn"
+              data-lb-src="photos/crawlspace-vapor-barrier-wide-view-charleston-sc.jpg"
+              data-lb-alt="Wide view of a completed crawlspace vapor barrier installation lit by work light in Charleston SC"
+              data-lb-cap="Completed vapor barrier — full crawlspace coverage, Charleston SC"
+              aria-label="View larger: completed vapor barrier, wide view">
+              <img src="photos/crawlspace-vapor-barrier-wide-view-charleston-sc.jpg" alt="Wide view of a completed crawlspace vapor barrier installation lit by work light in Charleston SC" width="1200" height="675" loading="lazy" decoding="async" />
+            </button>
+            <span class="showcase-tag">Vapor barrier</span>
+            <span class="showcase-zoom"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg> View full size</span>
+          </li>
+          <li class="showcase-slide">
+            <button type="button" class="showcase-btn"
+              data-lb-src="photos/crawlspace-vapor-barrier-ductwork-charleston-sc.jpg"
+              data-lb-alt="Completed crawlspace vapor barrier running beneath HVAC ductwork in Charleston SC"
+              data-lb-cap="Vapor barrier run cleanly beneath existing HVAC ductwork"
+              aria-label="View larger: vapor barrier beneath ductwork">
+              <img src="photos/crawlspace-vapor-barrier-ductwork-charleston-sc.jpg" alt="Completed crawlspace vapor barrier running beneath HVAC ductwork in Charleston SC" width="1200" height="675" loading="lazy" decoding="async" />
+            </button>
+            <span class="showcase-tag">Vapor barrier</span>
+            <span class="showcase-zoom"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg> View full size</span>
+          </li>
+          <li class="showcase-slide">
+            <button type="button" class="showcase-btn"
+              data-lb-src="photos/crawlspace-vapor-barrier-charleston-sc.webp"
+              data-lb-alt="Completed crawlspace vapor barrier with sealed foundation vents in Charleston SC"
+              data-lb-cap="Finished barrier with sealed foundation vents"
+              aria-label="View larger: vapor barrier with sealed foundation vents">
+              <img src="photos/crawlspace-vapor-barrier-charleston-sc.webp" alt="Completed crawlspace vapor barrier with sealed foundation vents in Charleston SC" width="2208" height="1242" loading="lazy" decoding="async" />
+            </button>
+            <span class="showcase-tag">Vapor barrier</span>
+            <span class="showcase-zoom"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg> View full size</span>
+          </li>
+          <li class="showcase-slide">
+            <button type="button" class="showcase-btn"
+              data-lb-src="photos/crawlspace-encapsulation-dehumidifier-charleston-sc.webp"
+              data-lb-alt="Encapsulated crawlspace with dehumidifier in Charleston SC"
+              data-lb-cap="Full encapsulation with dehumidifier installed by licensed HVAC partner"
+              aria-label="View larger: encapsulation with dehumidifier">
+              <img src="photos/crawlspace-encapsulation-dehumidifier-charleston-sc.webp" alt="Encapsulated crawlspace with dehumidifier in Charleston SC" width="2208" height="1242" loading="lazy" decoding="async" />
+            </button>
+            <span class="showcase-tag">Encapsulation</span>
+            <span class="showcase-zoom"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg> View full size</span>
+          </li>
+          <li class="showcase-slide">
+            <button type="button" class="showcase-btn"
+              data-lb-src="photos/crawlspace-access-door-sealed-charleston-sc.webp"
+              data-lb-alt="Sealed interior crawlspace access door with insulated perimeter in Charleston SC"
+              data-lb-cap="Sealed and insulated crawlspace access door"
+              aria-label="View larger: sealed access door">
+              <img src="photos/crawlspace-access-door-sealed-charleston-sc.webp" alt="Sealed interior crawlspace access door with insulated perimeter in Charleston SC" width="2208" height="1242" loading="lazy" decoding="async" />
+            </button>
+            <span class="showcase-tag">Access door</span>
+            <span class="showcase-zoom"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg> View full size</span>
+          </li>
+          <li class="showcase-slide">
+            <button type="button" class="showcase-btn"
+              data-lb-src="photos/crawlspace-vapor-barrier-detail-charleston-sc.webp"
+              data-lb-alt="Detail view of reinforced vapor barrier sealed around support piers"
+              data-lb-cap="Detail: barrier sealed tight around a support pier"
+              aria-label="View larger: barrier detail around support piers">
+              <img src="photos/crawlspace-vapor-barrier-detail-charleston-sc.webp" alt="Detail view of reinforced vapor barrier sealed around support piers" width="1242" height="2208" loading="lazy" decoding="async" />
+            </button>
+            <span class="showcase-tag">Detail</span>
+            <span class="showcase-zoom"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg> View full size</span>
+          </li>
+        </ul>
+        <button type="button" class="showcase-arrow next" id="showcaseNext" aria-label="Next photo">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="showcase-dots" id="showcaseDots" aria-label="Choose photo"></div>
+    </div>
+
+    <h3 class="ba-head">Before &amp; After</h3>
+    <p class="ba-sub">The same crawlspace work, start to finish — one of many jobs documented across the Lowcountry.</p>
     <div class="ba-feature">
       <div class="ba-photo">
-        <img src="photos/crawlspace-before-open-dirt-floor-charleston-sc.jpg" alt="Before: open crawlspace with exposed dirt floor, standing moisture, and damaged insulation in a Charleston SC home" width="2208" height="1242" loading="lazy" decoding="async" />
+        <button type="button" class="ba-btn"
+          data-lb-src="photos/crawlspace-before-open-dirt-floor-charleston-sc.jpg"
+          data-lb-alt="Before: open crawlspace with exposed dirt floor, standing moisture, and damaged insulation in a Charleston SC home"
+          data-lb-cap="Before — exposed dirt floor, moisture, and failing insulation"
+          aria-label="View larger: before treatment">
+          <img src="photos/crawlspace-before-open-dirt-floor-charleston-sc.jpg" alt="Before: open crawlspace with exposed dirt floor, standing moisture, and damaged insulation in a Charleston SC home" width="2208" height="1242" loading="lazy" decoding="async" />
+        </button>
         <span class="ba-label before">Before</span>
       </div>
       <div class="ba-photo">
-        <img src="photos/crawlspace-encapsulation-wall-liner-charleston-sc.jpg" alt="After: fully encapsulated crawlspace with sealed wall liner and vapor barrier floor in Charleston SC" width="675" height="900" loading="lazy" decoding="async" />
+        <button type="button" class="ba-btn"
+          data-lb-src="photos/crawlspace-encapsulation-wall-liner-charleston-sc.jpg"
+          data-lb-alt="After: fully encapsulated crawlspace with sealed wall liner and vapor barrier floor in Charleston SC"
+          data-lb-cap="After — sealed wall liner and full vapor barrier floor"
+          aria-label="View larger: after treatment">
+          <img src="photos/crawlspace-encapsulation-wall-liner-charleston-sc.jpg" alt="After: fully encapsulated crawlspace with sealed wall liner and vapor barrier floor in Charleston SC" width="675" height="900" loading="lazy" decoding="async" />
+        </button>
         <span class="ba-label after">After</span>
       </div>
-    </div>
-
-    <div class="gal-grid">
-      <a class="gal" href="photos/crawlspace-vapor-barrier-wide-view-charleston-sc.jpg" target="_blank" rel="noopener">
-        <span class="tag">Vapor barrier</span>
-        <img src="photos/crawlspace-vapor-barrier-wide-view-charleston-sc.jpg" alt="Wide view of a completed crawlspace vapor barrier installation lit by work light in Charleston SC" width="1200" height="675" loading="lazy" decoding="async" />
-      </a>
-      <a class="gal" href="photos/crawlspace-vapor-barrier-ductwork-charleston-sc.jpg" target="_blank" rel="noopener">
-        <span class="tag">Vapor barrier</span>
-        <img src="photos/crawlspace-vapor-barrier-ductwork-charleston-sc.jpg" alt="Completed crawlspace vapor barrier running beneath HVAC ductwork in Charleston SC" width="1200" height="675" loading="lazy" decoding="async" />
-      </a>
-      <a class="gal" href="photos/crawlspace-vapor-barrier-charleston-sc.webp" target="_blank" rel="noopener">
-        <span class="tag">Vapor barrier</span>
-        <img src="photos/crawlspace-vapor-barrier-charleston-sc.webp" alt="Completed crawlspace vapor barrier with sealed foundation vents in Charleston SC" width="2208" height="1242" loading="lazy" decoding="async" />
-      </a>
-      <a class="gal" href="photos/crawlspace-encapsulation-dehumidifier-charleston-sc.webp" target="_blank" rel="noopener">
-        <span class="tag">Encapsulation</span>
-        <img src="photos/crawlspace-encapsulation-dehumidifier-charleston-sc.webp" alt="Encapsulated crawlspace with dehumidifier in Charleston SC" width="2208" height="1242" loading="lazy" decoding="async" />
-      </a>
-      <a class="gal" href="photos/crawlspace-access-door-sealed-charleston-sc.webp" target="_blank" rel="noopener">
-        <span class="tag">Access door</span>
-        <img src="photos/crawlspace-access-door-sealed-charleston-sc.webp" alt="Sealed interior crawlspace access door with insulated perimeter in Charleston SC" width="2208" height="1242" loading="lazy" decoding="async" />
-      </a>
-      <a class="gal" href="photos/crawlspace-vapor-barrier-detail-charleston-sc.webp" target="_blank" rel="noopener">
-        <span class="tag">Detail</span>
-        <img src="photos/crawlspace-vapor-barrier-detail-charleston-sc.webp" alt="Detail view of reinforced vapor barrier sealed around support piers" width="1242" height="2208" loading="lazy" decoding="async" />
-      </a>
     </div>
   </div>
 </section>
@@ -680,19 +812,19 @@
     <p class="lede">When you call a national company, you often get a salesperson first and a crew you've never met later. With me, it's one person from the first crawl to the final cleanup.</p>
     <div class="fr-grid">
       <div class="fr-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         <span><b>One person, start to finish.</b> The same person who inspects your crawlspace is the one who does the work and cleans up after.</span>
       </div>
       <div class="fr-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         <span><b>No high-pressure sales.</b> No long in-home pitch or "today only" pricing. You get a number and time to think it over.</span>
       </div>
       <div class="fr-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         <span><b>Transparent, line-item quotes.</b> Every material and step is itemized. No mystery add-ons showing up at the end.</span>
       </div>
       <div class="fr-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         <span><b>Lower overhead, fair pricing.</b> No franchise fees or big fleet costs built into your bill — just a straight rate for solid work.</span>
       </div>
     </div>
@@ -754,10 +886,10 @@
       <h2>Crawlspace Repairs That Keep Your Closing on Track</h2>
       <p class="lede">When an inspection turns up elevated moisture or standing water days before closing, you need someone who moves fast and documents the work.</p>
       <ul>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Same-week turnaround on inspection repair items</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Photo and video documentation for your transaction file</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Written line-item invoices for the transaction record</li>
-        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Pre-listing moisture work so it never shows up on the buyer's report</li>
+        <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Same-week turnaround on inspection repair items</li>
+        <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Photo and video documentation for your transaction file</li>
+        <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Written line-item invoices for the transaction record</li>
+        <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Pre-listing moisture work so it never shows up on the buyer's report</li>
       </ul>
       <a href="#contact" class="btn btn-teal">Request a repair quote</a>
     </div>
@@ -778,7 +910,7 @@
   <div class="wrap">
     <div class="guarantee-inner">
       <div class="guarantee-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
       <div>
         <h3>Our Work is Backed by a Satisfaction Guarantee</h3>
@@ -795,28 +927,29 @@
     <h2>Where I Work</h2>
     <p class="lede">I'm in crawlspaces across the Charleston metro every week. If you're in the Lowcountry, there's a good chance I can get to you.</p>
     <ul class="area-list">
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Charleston</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Mount Pleasant</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> West Ashley</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Summerville</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> North Charleston</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> James Island</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Johns Island</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Daniel Island</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Goose Creek</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Hanahan</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Isle of Palms</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Sullivan's Island</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Charleston</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Mount Pleasant</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> West Ashley</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Summerville</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> North Charleston</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> James Island</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Johns Island</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Daniel Island</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Goose Creek</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Hanahan</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Isle of Palms</li>
+      <li><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Sullivan's Island</li>
     </ul>
     <p style="color:var(--muted);font-size:15.5px;max-width:720px">A lot of my work is older raised homes near the marsh and newer construction with minimal moisture control. Don't see your neighborhood? Call — if you're near the metro, I can usually make it work.</p>
     <div class="map-embed">
-      <!-- Update this embed URL once Coastal Crawlspaces has a Google Business Profile -->
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d214483.11737209826!2d-79.97085175000001!3d32.863815249999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6514b4a8d1f4591f%3A0xe945618501ccaaad!2sChucktown%20Crawlspace%20Co!5e0!3m2!1sen!2sus!4v1783326710261!5m2!1sen!2sus" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Coastal Crawlspaces service area — Charleston, SC"></iframe>
+      <!--
+        Service-area map, not a storefront pin. This is a plain Charleston-metro map
+        with no business pin attached.
+        TODO: once the Coastal Crawlspaces Google Business Profile is verified, swap this
+        for that profile's own embed URL so the pin shows the business.
+      -->
+      <iframe src="https://maps.google.com/maps?q=Charleston%2C%20South%20Carolina&amp;z=10&amp;output=embed" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Coastal Crawlspaces service area — Charleston, SC"></iframe>
     </div>
-    <a href="https://g.page/r/Ca2qzAGFYUXpEAE" class="map-link" target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      View on Google Maps
-    </a>
   </div>
 </section>
 
@@ -864,6 +997,11 @@
         <h3>Already worked with us?</h3>
         <p>A quick Google review helps other Charleston homeowners find a local option they can trust.</p>
       </div>
+      <!--
+        TODO: this review link still points at the ORIGINAL (Chucktown) Google Business
+        Profile. Replace the URL with the Coastal Crawlspaces profile's review link as
+        soon as that profile is verified, or reviews will land on the old listing.
+      -->
       <a href="https://g.page/r/Ca2qzAGFYUXpEAE/review" class="btn" target="_blank" rel="noopener">Leave a Google review</a>
     </div>
   </section>
@@ -877,19 +1015,19 @@
     <div class="contact-grid">
       <div>
         <div class="c-row">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg></span>
+          <span class="ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg></span>
           <div><div class="k">Call or text</div><div class="v"><a href="tel:+18432846425">(843) 284-6425</a><small>Send a crawlspace photo by text for a rough estimate</small></div></div>
         </div>
         <div class="c-row">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></span>
+          <span class="ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></span>
           <div><div class="k">Email</div><div class="v"><a href="mailto:hello@coastalcrawlspaces.com">hello@coastalcrawlspaces.com</a><small>Same-day reply during business hours</small></div></div>
         </div>
         <div class="c-row">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+          <span class="ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
           <div><div class="k">Hours</div><div class="v">7am – 7pm<small>Seven days a week</small></div></div>
         </div>
         <div class="c-row">
-          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+          <span class="ico"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
           <div><div class="k">Service area</div><div class="v">Charleston metro<small>&amp; the barrier islands</small></div></div>
         </div>
       </div>
@@ -973,29 +1111,169 @@
 <!-- sticky mobile CTA -->
 <div class="sticky-cta">
   <a href="tel:+18432846425" class="call">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg>
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg>
     Call now
   </a>
   <a href="#contact" class="quote">Request quote</a>
 </div>
 
+<!-- photo lightbox -->
+<dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+  <div class="lb-stage">
+    <p class="lb-counter" id="lbCounter"></p>
+    <img id="lbImage" src="" alt="" />
+    <p class="lb-caption" id="lbCaption"></p>
+    <button type="button" class="lb-close" id="lbClose" aria-label="Close photo viewer">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <button type="button" class="lb-arrow prev" id="lbPrev" aria-label="Previous photo">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <button type="button" class="lb-arrow next" id="lbNext" aria-label="Next photo">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
+  </div>
+</dialog>
+
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 
+  /* ---------- mobile nav ---------- */
   var navToggle = document.querySelector('.nav-toggle');
   var navLinks = document.getElementById('nav-links');
+  function closeNav() {
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+    navToggle.setAttribute('aria-label', 'Open menu');
+  }
   navToggle.addEventListener('click', function () {
     var open = navLinks.classList.toggle('open');
     navToggle.setAttribute('aria-expanded', open);
     navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
   });
   navLinks.addEventListener('click', function (e) {
-    if (e.target.tagName === 'A') {
-      navLinks.classList.remove('open');
-      navToggle.setAttribute('aria-expanded', 'false');
-      navToggle.setAttribute('aria-label', 'Open menu');
-    }
+    if (e.target.tagName === 'A') closeNav();
   });
+  document.addEventListener('click', function (e) {
+    if (!navLinks.classList.contains('open')) return;
+    if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) closeNav();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && navLinks.classList.contains('open')) closeNav();
+  });
+
+  /* ---------- finished-work carousel ---------- */
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var track = document.getElementById('showcaseTrack');
+
+  if (track) {
+    var slides = Array.prototype.slice.call(track.children);
+    var dotsWrap = document.getElementById('showcaseDots');
+    var current = 0, autoTimer = null, scrollTimer = null;
+
+    // build dot controls from the slides that actually exist
+    slides.forEach(function (s, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', 'Go to photo ' + (i + 1) + ' of ' + slides.length);
+      b.addEventListener('click', function () { goTo(i); restart(); });
+      dotsWrap.appendChild(b);
+    });
+    var dots = Array.prototype.slice.call(dotsWrap.children);
+
+    function setActive(i) {
+      current = i;
+      dots.forEach(function (d, di) {
+        d.classList.toggle('active', di === i);
+        d.setAttribute('aria-current', di === i ? 'true' : 'false');
+      });
+    }
+    function goTo(i) {
+      var n = (i + slides.length) % slides.length;
+      track.scrollTo({ left: n * track.clientWidth, behavior: reduceMotion ? 'auto' : 'smooth' });
+      setActive(n);
+    }
+    // keep dots in sync when the user swipes the track directly
+    track.addEventListener('scroll', function () {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(function () {
+        var n = Math.round(track.scrollLeft / track.clientWidth);
+        setActive(Math.max(0, Math.min(slides.length - 1, n)));
+      }, 90);
+    }, { passive: true });
+
+    function start() { if (reduceMotion) return; autoTimer = setInterval(function () { goTo(current + 1); }, 5200); }
+    function stop() { clearInterval(autoTimer); autoTimer = null; }
+    function restart() { stop(); start(); }
+
+    document.getElementById('showcasePrev').addEventListener('click', function () { goTo(current - 1); restart(); });
+    document.getElementById('showcaseNext').addEventListener('click', function () { goTo(current + 1); restart(); });
+    track.addEventListener('pointerenter', stop);
+    track.addEventListener('pointerleave', start);
+    track.addEventListener('focusin', stop);
+    track.addEventListener('focusout', start);
+    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+
+    setActive(0);
+    start();
+  }
+
+  /* ---------- lightbox (carousel slides + before/after photos) ---------- */
+  var lightbox = document.getElementById('lightbox');
+  var triggers = Array.prototype.slice.call(document.querySelectorAll('[data-lb-src]'));
+
+  if (lightbox && triggers.length && typeof lightbox.showModal === 'function') {
+    var lbImage = document.getElementById('lbImage');
+    var lbCaption = document.getElementById('lbCaption');
+    var lbCounter = document.getElementById('lbCounter');
+    var lbIndex = 0, lastFocused = null;
+
+    var photos = triggers.map(function (el) {
+      return { src: el.dataset.lbSrc, alt: el.dataset.lbAlt, cap: el.dataset.lbCap || '' };
+    });
+
+    function show(i) {
+      lbIndex = (i + photos.length) % photos.length;
+      var p = photos[lbIndex];
+      lbImage.src = p.src;
+      lbImage.alt = p.alt;
+      lbCaption.textContent = p.cap;
+      lbCounter.textContent = (lbIndex + 1) + ' / ' + photos.length;
+    }
+    triggers.forEach(function (el, i) {
+      el.addEventListener('click', function () {
+        lastFocused = document.activeElement;
+        show(i);
+        lightbox.showModal();
+      });
+    });
+    document.getElementById('lbNext').addEventListener('click', function () { show(lbIndex + 1); });
+    document.getElementById('lbPrev').addEventListener('click', function () { show(lbIndex - 1); });
+    document.getElementById('lbClose').addEventListener('click', function () { lightbox.close(); });
+    // click the backdrop area to dismiss
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox || e.target.classList.contains('lb-stage')) lightbox.close();
+    });
+    lightbox.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(lbIndex + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(lbIndex - 1); }
+    });
+    lightbox.addEventListener('close', function () {
+      lbImage.src = '';
+      if (lastFocused) lastFocused.focus();
+    });
+
+    // swipe between photos on touch devices
+    var touchX = null;
+    var stage = lightbox.querySelector('.lb-stage');
+    stage.addEventListener('touchstart', function (e) { touchX = e.changedTouches[0].clientX; }, { passive: true });
+    stage.addEventListener('touchend', function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 45) show(lbIndex + (dx < 0 ? 1 : -1));
+      touchX = null;
+    }, { passive: true });
+  }
 </script>
 
 </body>
