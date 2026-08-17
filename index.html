@@ -174,7 +174,18 @@
   .nav-phone { display: inline-flex; align-items: center; gap: 8px; background: var(--teal); color: #fff; font-weight: 700; padding: 10px 16px; border-radius: 8px; font-size: 15px; white-space: nowrap; }
   .nav-phone:hover { background: var(--teal-dark); }
   .nav-phone svg { width: 15px; height: 15px; }
-  @media (min-width: 900px) { .nav-links { display: flex; } }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 42px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; color: var(--navy); padding: 0; }
+  .nav-toggle svg { width: 22px; height: 22px; }
+  .nav-toggle .icon-close { display: none; }
+  .nav-toggle[aria-expanded="true"] .icon-open { display: none; }
+  .nav-toggle[aria-expanded="true"] .icon-close { display: block; }
+  @media (min-width: 900px) { .nav-links { display: flex; } .nav-toggle { display: none; } }
+  @media (max-width: 899.98px) {
+    .nav-links.open { display: grid; position: absolute; top: 100%; left: 0; right: 0; background: #fff; border-bottom: 1px solid var(--line); padding: 8px 20px 14px; gap: 0; box-shadow: 0 14px 28px -14px rgba(13,61,92,.3); }
+    .nav-links.open a { padding: 12px 4px; border-bottom: 1px solid var(--bg-soft); font-size: 16px; color: var(--navy); }
+    .nav-links.open a:last-child { border-bottom: 0; }
+  }
 
   /* hero */
   .hero { background: var(--bg-soft); padding: 56px 0; }
@@ -412,7 +423,7 @@
       </span>
       <span class="brand-name">Coastal Crawlspaces<small>Charleston, South Carolina</small></span>
     </a>
-    <nav class="nav-links" aria-label="Primary">
+    <nav class="nav-links" id="nav-links" aria-label="Primary">
       <a href="#services">Services</a>
       <a href="#pricing">Pricing</a>
       <a href="#gallery">Gallery</a>
@@ -421,10 +432,16 @@
       <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
     </nav>
-    <a href="tel:+18432846425" class="nav-phone">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg>
-      (843) 284-6425
-    </a>
+    <div class="nav-right">
+      <a href="tel:+18432846425" class="nav-phone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92Z"/></svg>
+        (843) 284-6425
+      </a>
+      <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">
+        <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -964,6 +981,21 @@
 
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  var navToggle = document.querySelector('.nav-toggle');
+  var navLinks = document.getElementById('nav-links');
+  navToggle.addEventListener('click', function () {
+    var open = navLinks.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open);
+    navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  navLinks.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+      navLinks.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+      navToggle.setAttribute('aria-label', 'Open menu');
+    }
+  });
 </script>
 
 </body>
