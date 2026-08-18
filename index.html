@@ -47,9 +47,7 @@
     "https://coastalcrawlspaces.com/photos/crawlspace-vapor-barrier-charleston-sc.webp",
     "https://coastalcrawlspaces.com/photos/crawlspace-encapsulation-dehumidifier-charleston-sc.webp",
     "https://coastalcrawlspaces.com/photos/crawlspace-access-door-sealed-charleston-sc.webp",
-    "https://coastalcrawlspaces.com/photos/crawlspace-vapor-barrier-detail-charleston-sc.webp",
-    "https://coastalcrawlspaces.com/photos/crawlspace-before-open-dirt-floor-charleston-sc.jpg",
-    "https://coastalcrawlspaces.com/photos/crawlspace-encapsulation-wall-liner-charleston-sc.jpg",
+    "https://coastalcrawlspaces.com/photos/crawlspace-vapor-barrier-detail-charleston-sc.webp",    "https://coastalcrawlspaces.com/photos/crawlspace-encapsulation-wall-liner-charleston-sc.jpg",
     "https://coastalcrawlspaces.com/photos/crawlspace-vapor-barrier-ductwork-charleston-sc.jpg",
     "https://coastalcrawlspaces.com/photos/crawlspace-vapor-barrier-wide-view-charleston-sc.jpg"
   ],
@@ -221,8 +219,11 @@
   .checks li { display: flex; align-items: center; gap: 10px; }
   .checks svg { width: 18px; height: 18px; color: var(--teal); flex-shrink: 0; }
   .hero-photo { border-radius: var(--radius); overflow: hidden; box-shadow: 0 12px 40px -12px rgba(13,61,92,.35); background: var(--photo-bg); }
-  /* 16/9 matches the source photo (2208x1242) — no more cropping the top and bottom off */
-  .hero-photo img { width: 100%; object-fit: cover; aspect-ratio: 16/9; }
+  /* height:auto is required — the img's height="1242" attribute otherwise sets an explicit
+     height and aspect-ratio is ignored, rendering the hero as a tall narrow slice.
+     Taller crop on phones; opens to the source photo's native 16/9 when there's width. */
+  .hero-photo img { width: 100%; height: auto; object-fit: cover; aspect-ratio: 4/3; }
+  @media (min-width: 900px) { .hero-photo img { aspect-ratio: 16/9; } }
   .photo-credit { font-size: 13px; color: var(--muted); margin-top: 10px; text-align: center; }
 
   /* trust strip */
@@ -305,18 +306,6 @@
   .showcase-dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; background: #b9ccd8; padding: 0; cursor: pointer; transition: background .15s ease, transform .15s ease; }
   .showcase-dots button.active { background: var(--teal); transform: scale(1.25); }
   .showcase-caption { text-align: center; font-size: 14px; color: var(--muted); margin-top: 12px; }
-
-  /* ===== before / after pair ===== */
-  .ba-head { font-family: var(--serif); font-weight: 900; color: var(--navy); font-size: 20px; margin: 44px 0 4px; }
-  .ba-sub { color: var(--muted); font-size: 15.5px; margin-bottom: 18px; }
-  .ba-feature { display: grid; gap: 14px; }
-  @media (min-width: 640px) { .ba-feature { grid-template-columns: 1fr 1fr; } }
-  .ba-photo { border-radius: var(--radius); overflow: hidden; position: relative; background: var(--photo-bg); height: clamp(240px, 44vw, 380px); }
-  .ba-photo button { display: block; width: 100%; height: 100%; border: 0; padding: 0; background: none; cursor: zoom-in; }
-  .ba-photo img { width: 100%; height: 100%; object-fit: contain; display: block; }
-  .ba-label { position: absolute; bottom: 12px; left: 12px; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .07em; padding: 5px 13px; border-radius: 6px; pointer-events: none; }
-  .ba-label.before { background: rgba(7,39,57,.88); color: #fff; }
-  .ba-label.after { background: rgba(27,125,140,.92); color: #fff; }
 
   /* ===== lightbox ===== */
   /* the dialog itself carries the scrim so page content never bleeds through */
@@ -694,7 +683,7 @@
 <section id="gallery" class="beforeafter">
   <div class="wrap">
     <p class="kicker">Finished Work</p>
-    <h2>Before &amp; After: See the Difference</h2>
+    <h2>See the Work</h2>
     <p class="lede">Every job is photo-documented from start to finish. These are real Charleston crawlspaces I've sealed — select any photo to view it full size.</p>
 
     <div class="showcase" aria-roledescription="carousel" aria-label="Completed crawlspace work">
@@ -749,6 +738,17 @@
           </li>
           <li class="showcase-slide">
             <button type="button" class="showcase-btn"
+              data-lb-src="photos/crawlspace-encapsulation-wall-liner-charleston-sc.jpg"
+              data-lb-alt="Fully encapsulated crawlspace with sealed wall liner and vapor barrier floor in Charleston SC"
+              data-lb-cap="Sealed wall liner over a full vapor barrier floor"
+              aria-label="View larger: sealed wall liner and vapor barrier">
+              <img src="photos/crawlspace-encapsulation-wall-liner-charleston-sc.jpg" alt="Fully encapsulated crawlspace with sealed wall liner and vapor barrier floor in Charleston SC" width="675" height="900" loading="lazy" decoding="async" />
+            </button>
+            <span class="showcase-tag">Encapsulation</span>
+            <span class="showcase-zoom"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M11 8v6M8 11h6"/></svg> View full size</span>
+          </li>
+          <li class="showcase-slide">
+            <button type="button" class="showcase-btn"
               data-lb-src="photos/crawlspace-access-door-sealed-charleston-sc.webp"
               data-lb-alt="Sealed interior crawlspace access door with insulated perimeter in Charleston SC"
               data-lb-cap="Sealed and insulated crawlspace access door"
@@ -777,30 +777,6 @@
       <div class="showcase-dots" id="showcaseDots" aria-label="Choose photo"></div>
     </div>
 
-    <h3 class="ba-head">Before &amp; After</h3>
-    <p class="ba-sub">The same crawlspace work, start to finish — one of many jobs documented across the Lowcountry.</p>
-    <div class="ba-feature">
-      <div class="ba-photo">
-        <button type="button" class="ba-btn"
-          data-lb-src="photos/crawlspace-before-open-dirt-floor-charleston-sc.jpg"
-          data-lb-alt="Before: open crawlspace with exposed dirt floor, standing moisture, and damaged insulation in a Charleston SC home"
-          data-lb-cap="Before — exposed dirt floor, moisture, and failing insulation"
-          aria-label="View larger: before treatment">
-          <img src="photos/crawlspace-before-open-dirt-floor-charleston-sc.jpg" alt="Before: open crawlspace with exposed dirt floor, standing moisture, and damaged insulation in a Charleston SC home" width="2208" height="1242" loading="lazy" decoding="async" />
-        </button>
-        <span class="ba-label before">Before</span>
-      </div>
-      <div class="ba-photo">
-        <button type="button" class="ba-btn"
-          data-lb-src="photos/crawlspace-encapsulation-wall-liner-charleston-sc.jpg"
-          data-lb-alt="After: fully encapsulated crawlspace with sealed wall liner and vapor barrier floor in Charleston SC"
-          data-lb-cap="After — sealed wall liner and full vapor barrier floor"
-          aria-label="View larger: after treatment">
-          <img src="photos/crawlspace-encapsulation-wall-liner-charleston-sc.jpg" alt="After: fully encapsulated crawlspace with sealed wall liner and vapor barrier floor in Charleston SC" width="675" height="900" loading="lazy" decoding="async" />
-        </button>
-        <span class="ba-label after">After</span>
-      </div>
-    </div>
   </div>
 </section>
 
