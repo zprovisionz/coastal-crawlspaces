@@ -1,5 +1,19 @@
-https://chucktowncrawlspace.com/*  https://coastalcrawlspaces.net/:splat  301!
-http://chucktowncrawlspace.com/*  https://coastalcrawlspaces.net/:splat  301!
-https://chucktowncrawl.com/*      https://coastalcrawlspaces.net/:splat  301!
-http://chucktowncrawl.com/*       https://coastalcrawlspaces.net/:splat  301!
-http://coastalcrawlspaces.net/*   https://coastalcrawlspaces.net/:splat  301!
+# Intentionally empty.
+#
+# The old Netlify _redirects file forwarded three things that don't belong
+# in this file on Cloudflare:
+#
+# 1. http -> https on coastalcrawlspaces.net
+#    Cloudflare does this automatically. Dashboard -> SSL/TLS -> Edge
+#    Certificates -> "Always Use HTTPS" (should already be on by default).
+#
+# 2. chucktowncrawlspace.com -> coastalcrawlspaces.net
+# 3. chucktowncrawl.com -> coastalcrawlspaces.net
+#    _redirects only matches requests that already landed on THIS zone
+#    (coastalcrawlspaces.net) - it can never catch traffic arriving at a
+#    different domain, no matter how it's written. If those old domains
+#    are still yours, set the 301 wherever their DNS lives:
+#      - If added to this same Cloudflare account as their own zones:
+#        Rules -> Redirect Rules (or Bulk Redirects) on each old domain.
+#      - If still on GoDaddy: My Products -> DNS -> Forwarding on each
+#        old domain, forward to https://coastalcrawlspaces.net, type 301.
